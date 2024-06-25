@@ -9,7 +9,7 @@ const form = document.querySelector('form');
 const gallery = document.querySelector('.gallery');
 const loader = document.querySelector('.loader')
 
-form.addEventListener('submit', (e) => {
+async function onSubmit(e) {
     e.preventDefault();
     gallery.innerHTML = '';
     showLoader();
@@ -26,16 +26,16 @@ form.addEventListener('submit', (e) => {
         hideLoader();
         return
     }
-    fetchImages(value)
-        .then(data => {
-            const markup = imagesTemplate(data);
-            gallery.insertAdjacentHTML('beforeend', markup);
-            const lightbox = new SimpleLightbox('.gallery a', { captionsData: 'alt', captionDelay: 250 });
-            lightbox.refresh();
-        })
-        .catch(error => {
-            console.log(error);
-            iziToast.error({
+    
+    try{
+    const data = await fetchImages(value)
+    const markup = imagesTemplate(data);
+    gallery.insertAdjacentHTML('beforeend', markup);
+    const lightbox = new SimpleLightbox('.gallery a', { captionsData: 'alt', captionDelay: 250 });
+    lightbox.refresh();
+    } catch (error){
+        console.log(error);
+        iziToast.error({
       title: 'Error',
       message: 'Sorry, there are no images matching your search query. Please try again!',
       position: 'topCenter',
@@ -43,10 +43,11 @@ form.addEventListener('submit', (e) => {
       theme: 'dark',
       messageColor: 'white',
      })
-         })
-        .finally(() => hideLoader())
+    }
+    hideLoader()
     form.reset();
-});
+}
+form.addEventListener('submit', onSubmit);
 
 function showLoader() {
     loader.classList.remove('visually-hidden');

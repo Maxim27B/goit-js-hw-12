@@ -1,15 +1,19 @@
-const fetchImages = value => {
-  const BASE_URL = 'https://pixabay.com';
-  const END_POINT = '/api/';
-  const params = new URLSearchParams({
-    key: '44460867-9f013743ec0c5b2ec6c0f5088',
-    q: value,
-    image_type: 'photo',
-    orientation: 'horizontal',
-    safesearch: true,
+import Axios from "axios";
+const axios = Axios.create({
+  baseURL: 'https://pixabay.com',
+});
+
+const fetchImages = async value => {
+  const res = await axios.get('/api/', {
+    params: {
+      key: '44460867-9f013743ec0c5b2ec6c0f5088',
+      q: value,
+      image_type: 'photo',
+      orientation: 'horizontal',
+      safesearch: true,
+    }
   })
-  const url = `${BASE_URL}${END_POINT}?${params}`;
-  return fetch(url).then(res => res.json())
+  return res.data
 }
 
 export default fetchImages;
