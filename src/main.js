@@ -7,7 +7,8 @@ import "simplelightbox/dist/simple-lightbox.min.css";
 
 const form = document.querySelector('form');
 const gallery = document.querySelector('.gallery');
-const loader = document.querySelector('.loader')
+const loader = document.querySelector('.loader');
+const loadBtn = document.querySelector('.load-images-btn');
 
 async function onSubmit(e) {
     e.preventDefault();
@@ -24,6 +25,7 @@ async function onSubmit(e) {
             messageColor: 'white',
         });
         hideLoader();
+        hideLoadBtn();
         return
     }
     
@@ -33,6 +35,7 @@ async function onSubmit(e) {
     gallery.insertAdjacentHTML('beforeend', markup);
     const lightbox = new SimpleLightbox('.gallery a', { captionsData: 'alt', captionDelay: 250 });
     lightbox.refresh();
+    showLoadBtn();
     } catch (error){
         console.log(error);
         iziToast.error({
@@ -44,15 +47,21 @@ async function onSubmit(e) {
       messageColor: 'white',
      })
     }
-    hideLoader()
+    hideLoader();
     form.reset();
 }
 form.addEventListener('submit', onSubmit);
 
+function showLoadBtn() {
+    loadBtn.classList.remove('visually-hidden');
+}
+function hideLoadBtn() {
+    loadBtn.classList.add('visually-hidden');
+}
+
 function showLoader() {
     loader.classList.remove('visually-hidden');
 }
-
 function hideLoader() {
     loader.classList.add('visually-hidden');
 }

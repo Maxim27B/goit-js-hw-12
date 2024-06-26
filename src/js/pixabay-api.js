@@ -6,8 +6,10 @@ const axios = Axios.create({
 const fetchImages = async value => {
   const res = await axios.get('/api/', {
     params: {
-      key: '44460867-9f013743ec0c5b2ec6c0f5088',
       q: value,
+      per_page: 15,
+      page: 1,
+      key: '44460867-9f013743ec0c5b2ec6c0f5088',
       image_type: 'photo',
       orientation: 'horizontal',
       safesearch: true,
