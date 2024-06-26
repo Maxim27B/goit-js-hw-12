@@ -14,6 +14,7 @@ let page = 1;
 let value = '';
 let lightbox;
 let totalPages;
+let cardHeight;
 
 form.addEventListener('submit', onSubmit);
 async function onSubmit(e) {
@@ -62,13 +63,15 @@ async function onSubmit(e) {
         hideLoadBtn();
         console.log(error);
         iziToast.error({
-      title: 'Error',
-      message: 'Sorry, there are no images matching your search query. Please try again!',
-      position: 'topRight',
-      backgroundColor: 'red',
-      theme: 'dark',
-      messageColor: 'white',
-        })}
+            title: 'Error',
+            message: 'Sorry, there are no images matching your search query. Please try again!',
+            position: 'topRight',
+            backgroundColor: 'red',
+            theme: 'dark',
+            messageColor: 'white',
+        })
+    }
+    cardHeight = gallery.firstChild.getBoundingClientRect().height;
     hideLoader();
     form.reset();
 }
@@ -93,6 +96,10 @@ loadBtn.addEventListener('click', async () => {
     const data = await fetchImages(value, page)
     const markup = imagesTemplate(data);
     gallery.insertAdjacentHTML('beforeend', markup);
+    scrollBy({
+        top: cardHeight * 2,
+        behavior: "smooth",
+    });
     lightbox = new SimpleLightbox('.gallery a', { captionsData: 'alt', captionDelay: 250 });
     lightbox.refresh();
     hideLoader();
