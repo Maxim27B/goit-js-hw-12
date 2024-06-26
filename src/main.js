@@ -10,47 +10,95 @@ const gallery = document.querySelector('.gallery');
 const loader = document.querySelector('.loader');
 const loadBtn = document.querySelector('.load-images-btn');
 
+let page = 1;
+let value = '';
+let lightbox;
+let totalPages;
+
+form.addEventListener('submit', onSubmit);
 async function onSubmit(e) {
     e.preventDefault();
-    gallery.innerHTML = '';
+    hideLoadBtn();
     showLoader();
-    const value = e.target.elements.search.value.trim();
+    gallery.innerHTML = '';
+    page = 1;
+    value = e.target.elements.search.value.trim();
     if (value === ''){
         iziToast.warning({
             title: 'Warning',
             message: 'Search query is empty. Please, enter a word',
-            position: 'topCenter',
+            position: 'topRight',
             backgroundColor: 'orange',
             theme: 'dark',
             messageColor: 'white',
         });
         hideLoader();
-        hideLoadBtn();
         return
     }
     
-    try{
-    const data = await fetchImages(value)
-    const markup = imagesTemplate(data);
-    gallery.insertAdjacentHTML('beforeend', markup);
-    const lightbox = new SimpleLightbox('.gallery a', { captionsData: 'alt', captionDelay: 250 });
-    lightbox.refresh();
-    showLoadBtn();
-    } catch (error){
+    try {
+        const data = await fetchImages(value, page);
+        if (data.hits.length === 0) {
+            hideLoadBtn();
+            hideLoader();
+            iziToast.error({
+                title: 'Error',
+                message: 'Sorry, there are no images matching your search query. Please try again!',
+                position: 'topRight',
+                backgroundColor: 'red',
+                theme: 'dark',
+                messageColor: 'white',
+            });
+            form.reset();
+            return
+        }
+        totalPages = Math.ceil(data.totalHits / 15);
+        const markup = imagesTemplate(data);
+        gallery.insertAdjacentHTML('beforeend', markup);
+        lightbox = new SimpleLightbox('.gallery a', { captionsData: 'alt', captionDelay: 250 });
+        lightbox.refresh();
+        showLoadBtn();
+    } catch (error) {
+        hideLoadBtn();
         console.log(error);
         iziToast.error({
       title: 'Error',
       message: 'Sorry, there are no images matching your search query. Please try again!',
-      position: 'topCenter',
+      position: 'topRight',
       backgroundColor: 'red',
       theme: 'dark',
       messageColor: 'white',
-     })
-    }
+        })}
     hideLoader();
     form.reset();
 }
-form.addEventListener('submit', onSubmit);
+
+
+loadBtn.addEventListener('click', async () => {
+    hideLoadBtn();
+    showLoader();
+    page++;
+    if (page > totalPages) {
+        iziToast.info({
+            title: '',
+            message: "We're sorry, but you've reached the end of search results.",
+            position: 'topRight',
+            backgroundColor: 'blue',
+            theme: 'dark',
+            messageColor: 'white',
+        });
+        hideLoader();
+        return
+    };
+    const data = await fetchImages(value, page)
+    const markup = imagesTemplate(data);
+    gallery.insertAdjacentHTML('beforeend', markup);
+    lightbox = new SimpleLightbox('.gallery a', { captionsData: 'alt', captionDelay: 250 });
+    lightbox.refresh();
+    hideLoader();
+    showLoadBtn();
+})
+
 
 function showLoadBtn() {
     loadBtn.classList.remove('visually-hidden');
