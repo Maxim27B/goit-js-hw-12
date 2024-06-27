@@ -57,7 +57,6 @@ async function onSubmit(e) {
         const markup = imagesTemplate(data);
         gallery.insertAdjacentHTML('beforeend', markup);
         lightbox = new SimpleLightbox('.gallery a', { captionsData: 'alt', captionDelay: 250 });
-        lightbox.refresh();
         showLoadBtn();
     } catch (error) {
         hideLoadBtn();
