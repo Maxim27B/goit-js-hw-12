@@ -100,7 +100,6 @@ loadBtn.addEventListener('click', async () => {
         top: cardHeight * 2,
         behavior: "smooth",
     });
-    lightbox = new SimpleLightbox('.gallery a', { captionsData: 'alt', captionDelay: 250 });
     lightbox.refresh();
     hideLoader();
     showLoadBtn();
